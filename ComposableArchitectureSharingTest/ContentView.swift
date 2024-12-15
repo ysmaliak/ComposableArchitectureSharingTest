@@ -13,17 +13,15 @@ struct Dummy: Identifiable, Codable {
     let value: String
 }
 
-extension SharedKey where Self == FileStorageKey<IdentifiedArrayOf<Dummy>>.Default {
-    static var dummies: Self {
-        Self[.fileStorage(.documentsDirectory.appending(component: "dummy.json")), default: []]
-    }
+extension URL {
+    static let dummies = Self.documentsDirectory.appending(component: "dummy.json")
 }
 
 @Reducer
 struct ContentFeature {
     @ObservableState
     struct State {
-        @Shared(.dummies) var dummies: IdentifiedArrayOf<Dummy>
+        @Shared(.fileStorage(.dummies)) var dummies: IdentifiedArrayOf<Dummy> = []
         var strings: [String] = []
     }
 
@@ -45,11 +43,11 @@ struct ContentFeature {
             case .addButtonTapped:
                 let id = UUID()
                 let dummy = Dummy(id: id, value: "Dummy \(id.uuidString)")
-                state.$dummies.withLock { $0[id: dummy.id] = dummy }
+                state.dummies[id: dummy.id] = dummy
                 return .none
 
             case .clearButtonTapped:
-                state.$dummies.withLock { $0.removeAll() }
+                state.dummies.removeAll()
                 return .none
 
             case .stringGenerated(let text):
