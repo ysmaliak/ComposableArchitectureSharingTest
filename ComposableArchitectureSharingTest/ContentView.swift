@@ -5,7 +5,7 @@
 //  Created by Yan Smaliak on 15/12/2024.
 //
 
-import ComposableArchitecture
+import Sharing
 import SwiftUI
 
 struct Dummy: Identifiable, Codable {
@@ -13,72 +13,52 @@ struct Dummy: Identifiable, Codable {
     let value: String
 }
 
-extension SharedKey where Self == FileStorageKey<IdentifiedArrayOf<Dummy>>.Default {
+extension SharedKey where Self == FileStorageKey<[Dummy]>.Default {
     static var dummies: Self {
         Self[.fileStorage(.documentsDirectory.appending(component: "dummy.json")), default: []]
     }
 }
 
-@Reducer
-struct ContentFeature {
-    @ObservableState
-    struct State {
-        @Shared(.dummies) var dummies: IdentifiedArrayOf<Dummy>
-        var strings: [String] = []
-    }
+@MainActor
+@Observable
+final class ContentViewModel {
+    @ObservationIgnored @Shared(.dummies) var dummies: [Dummy] = []
+    var strings: [String] = []
 
-    enum Action {
-        case onAppear
-        case addButtonTapped
-        case clearButtonTapped
-        case stringGenerated(String)
-    }
-
-    @Dependency(\.continuousClock) var clock
-
-    var body: some ReducerOf<Self> {
-        Reduce { state, action in
-            switch action {
-            case .onAppear:
-                return generateStrings()
-
-            case .addButtonTapped:
-                let id = UUID()
-                let dummy = Dummy(id: id, value: "Dummy \(id.uuidString)")
-                state.$dummies.withLock { $0[id: dummy.id] = dummy }
-                return .none
-
-            case .clearButtonTapped:
-                state.$dummies.withLock { $0.removeAll() }
-                return .none
-
-            case .stringGenerated(let text):
-                state.strings.append(text)
-                return .none
-            }
+    func onAppear() {
+        Task {
+            await generateStrings()
         }
     }
 
-    private func generateStrings() -> Effect<Action> {
-        .run { send in
-            await send(.stringGenerated("Message 0"))
+    func addDummy() {
+        let id = UUID()
+        let dummy = Dummy(id: id, value: "Dummy \(id.uuidString)")
+        $dummies.withLock { $0.append(dummy) }
+    }
 
-            let inspiringMessages = ["Message 1", "Message 2", "Message 3", "Message 4", "Message 5"]
-            for message in inspiringMessages {
-                try await clock.sleep(for: .seconds(3))
-                await send(.stringGenerated(message))
-            }
+    func clearDummies() {
+        $dummies.withLock { $0.removeAll() }
+    }
+
+    private func generateStrings() async {
+        strings.append("Message 0")
+
+        let inspiringMessages = ["Message 1", "Message 2", "Message 3", "Message 4", "Message 5"]
+        for message in inspiringMessages {
+            try? await Task.sleep(for: .seconds(3))
+            strings.append(message)
         }
     }
 }
 
 struct ContentView: View {
-    @Bindable var store: StoreOf<ContentFeature>
+    @State private var viewModel = ContentViewModel()
 
     var body: some View {
         VStack(spacing: 0) {
             List {
-                ForEach(store.dummies) { dummy in
+                ForEach(viewModel.dummies) { dummy in
                     VStack {
                         Text(dummy.value)
                     }
@@ -88,7 +68,7 @@ struct ContentView: View {
             Divider()
 
             List {
-                ForEach(store.strings, id: \.self) { text in
+                ForEach(viewModel.strings, id: \.self) { text in
                     Text(text)
                 }
             }
@@ -96,19 +76,19 @@ struct ContentView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button("Add") {
-                    store.send(.addButtonTapped)
+                    viewModel.addDummy()
                 }
             }
 
             ToolbarItem(placement: .navigationBarLeading) {
                 Button("Clear", role: .destructive) {
-                    store.send(.clearButtonTapped)
+                    viewModel.clearDummies()
                 }
                 .tint(.red)
             }
         }
         .onAppear {
-            store.send(.onAppear)
+            viewModel.onAppear()
         }
     }
 }

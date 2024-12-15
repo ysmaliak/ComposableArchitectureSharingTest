@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9A9CBB732D0F2B0300EBC8BC /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 9A9CBB722D0F2B0300EBC8BC /* ComposableArchitecture */; };
+		9A9CBBD12D0F562E00EBC8BC /* Sharing in Frameworks */ = {isa = PBXBuildFile; productRef = 9A9CBBD02D0F562E00EBC8BC /* Sharing */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,7 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9A9CBB732D0F2B0300EBC8BC /* ComposableArchitecture in Frameworks */,
+				9A9CBBD12D0F562E00EBC8BC /* Sharing in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -70,7 +70,7 @@
 			);
 			name = ComposableArchitectureSharingTest;
 			packageProductDependencies = (
-				9A9CBB722D0F2B0300EBC8BC /* ComposableArchitecture */,
+				9A9CBBD02D0F562E00EBC8BC /* Sharing */,
 			);
 			productName = ComposableArchitectureSharingTest;
 			productReference = 9AE62DC42D0F2A240089483E /* ComposableArchitectureSharingTest.app */;
@@ -101,7 +101,7 @@
 			mainGroup = 9AE62DBB2D0F2A240089483E;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				9A9CBB712D0F2B0300EBC8BC /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
+				9A9CBBCF2D0F562E00EBC8BC /* XCRemoteSwiftPackageReference "swift-sharing" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9AE62DC52D0F2A240089483E /* Products */;
@@ -346,21 +346,21 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		9A9CBB712D0F2B0300EBC8BC /* XCRemoteSwiftPackageReference "swift-composable-architecture" */ = {
+		9A9CBBCF2D0F562E00EBC8BC /* XCRemoteSwiftPackageReference "swift-sharing" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/pointfreeco/swift-composable-architecture";
+			repositoryURL = "https://github.com/pointfreeco/swift-sharing";
 			requirement = {
 				kind = exactVersion;
-				version = 1.17.0;
+				version = 1.1.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		9A9CBB722D0F2B0300EBC8BC /* ComposableArchitecture */ = {
+		9A9CBBD02D0F562E00EBC8BC /* Sharing */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 9A9CBB712D0F2B0300EBC8BC /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
-			productName = ComposableArchitecture;
+			package = 9A9CBBCF2D0F562E00EBC8BC /* XCRemoteSwiftPackageReference "swift-sharing" */;
+			productName = Sharing;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

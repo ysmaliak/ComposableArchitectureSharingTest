@@ -12,7 +12,9 @@ import SwiftUI
 struct ComposableArchitectureSharingTestApp: App {
     var body: some Scene {
         WindowGroup {
-            AppView(store: Store(initialState: AppFeature.State(), reducer: { AppFeature() }))
+            NavigationStack {
+                ContentView()
+            }
         }
     }
 }
